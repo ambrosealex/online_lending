@@ -1,0 +1,60 @@
+<a href="/logout">Logout</a>
+<h3>Name: <%= @user.f_name %> <%= @user.l_name %></h3>
+<h3>Account Balance: $<%= @user.balance %></h3>
+
+<% if flash[:errors] %>
+  <% flash[:errors].each do |error| %>
+      <h4 style="color:red"> <%= error[1][0] %> </h4>
+  <% end %>
+<% end %>
+
+<h3>List of people who are in need of help:</h3>
+<% if @borrowers.length > 0 %>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Money Needed For</th>
+            <th>Description</th>
+            <th>Amount Needed</th>
+            <th>Amount Raised</th>
+            <th>Action</th>
+        </tr>
+        <% @borrowers.each do |borrower| %>
+            <tr>
+                <td><%= borrower.f_name %> <%= borrower.l_name %></td>
+                <td><%= borrower.cause %></td>
+                <td><%= borrower.description %></td>
+                <td><%= borrower.goal %></td>
+                <td><%= borrower.amount_raised %></td>
+                <td><form class="" action="/loan/<%= borrower.id %>" method="post">
+                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                    <input type="number" name="amount" min="0" max="50000" step='100' value="0"> <input type="submit" name="lendBtn" value="Lend">
+                </form></td>
+            </tr>
+        <% end %>
+    </table>
+<% end %>
+
+<h3>List of people to whom you lent money:</h3>
+<% if @beneficiaries.length > 0 %>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Money Needed For</th>
+            <th>Description</th>
+            <th>Amount Needed</th>
+            <th>Amount Raised</th>
+            <th>Amount Lent</th>
+        </tr>
+        <% @beneficiaries.each do |beneficiary| %>
+            <tr>
+                <td><%= beneficiary.f_name %> <%= beneficiary.l_name %></td>
+                <td><%= beneficiary.cause %></td>
+                <td><%= beneficiary.description %></td>
+                <td><%= beneficiary.goal %></td>
+                <td><%= beneficiary.amount_raised %></td>
+                <td><%= Loan.where(lender_id:session[:user_id]).where(borrower_id:beneficiary.id).first.amount %></td>
+            </tr>
+        <% end %>
+    </table>
+<% end %>

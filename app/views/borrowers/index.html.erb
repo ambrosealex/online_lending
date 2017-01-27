@@ -1,0 +1,22 @@
+<a href="/logout">Logout</a>
+<h3>Name: <%= @user.f_name %> <%= @user.l_name %></h3>
+<h3>Amount Needed: $<%= @user.goal %></h3>
+<h3>Amount Raised: $<%= @user.amount_raised %></h3>
+
+<h3>List of people who sent you money: </h3>
+<% if @lenders.length > 0 %>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Amount Lent</th>
+        </tr>
+        <% @lenders.each do |lender| %>
+            <tr>
+                <td><%= lender.f_name %> <%= lender.l_name %></td>
+                <td><%= lender.email %></td>
+                <td><%= Loan.where(lender_id:lender.id).where(borrower_id:session[:user_id]).first.amount %></td>
+            </tr>
+        <% end %>
+    </table>
+<% end %>
